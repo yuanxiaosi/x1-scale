@@ -1,4 +1,4 @@
-Readme.md# logger for node
+# x1-scale
 dom zoom(scale) in pc browser
 
 # Installation
