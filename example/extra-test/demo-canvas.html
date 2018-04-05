@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>选座位</title>
+<meta charset="utf-8">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="renderer" content="webkit">
+<meta http-equiv="Cache-Control" content="no-siteapp"/>
+<meta content="yelo" name="author"/>
+<meta name="copyright" content="Copyright (c) 2016 Yelo."/>
+<meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="blank" name="apple-mobile-web-app-status-bar-style"/>
+<meta name="apple-touch-fullscreen" content="yes">
+<meta content="telephone=no" name="format-detection"/>
+</head>
+<style type="text/css">
+	*{padding: 0px;margin:0px;}
+ #seat{
+  width: 600;
+  height: 300px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+ }
+ .rows{
+  width: 500px;
+  height: 100px;
+
+ }
+ .colume{
+  width: 100px;
+  height: 100px;
+  background: #000;
+  color: #fff;
+  float: left;
+ }
+</style>
+<body>
+  <p id="scaleHtml" style="width:340px;word-wrap:break-word;display:none;">100</p>
+	<canvas width="600" height="300" id="canvas"></canvas>
+
+  
+
+
+  <script src="./js/hammer.min.js"></script>
+  <script type="text/javascript">
+    var zoomIntensity = 0.2;
+
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var scale = 1;
+    var originx = 0;
+    var originy = 0;
+
+
+    var img = new Image()
+
+    img.src = './img.png'
+
+
+    function draw(){
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.restore();
+
+
+      context.drawImage(img,0,0, width, height); 
+    }
+    // Draw loop at 60FPS.
+    setInterval(draw, 1000/60);
+
+    canvas.onmousewheel = function (event){
+        event.preventDefault();
+        var mousex = event.clientX - canvas.offsetLeft;
+        var mousey = event.clientY - canvas.offsetTop;
+        var wheel = event.wheelDelta/120;
+        var zoom = Math.exp(wheel*zoomIntensity);
+
+        context.translate(originx+mousex/scale, originy+mousey/scale);
+        context.scale(zoom, zoom);
+        context.translate(-(originx+mousex/scale), -(originy+mousey/scale));
+        originx -= mousex/(scale*zoom) - mousex/scale;
+        originy -= mousey/(scale*zoom) - mousey/scale;
+
+        scale *= zoom;
+    }
+
+    
+
+
+
+
+  </script>
+</body>
+</html>

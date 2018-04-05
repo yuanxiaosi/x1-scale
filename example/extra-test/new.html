@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>选座位</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+</head>
+<style type="text/css">
+	*{padding: 0px;margin:0px;}
+  #scale-box{
+    width: 600px;
+    height: 300px;
+    overflow: hidden;
+  }
+ #seat{
+  width: 600px;
+  height: 300px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  overflow: hidden;
+  max-width: 600px;
+  max-height: 300px;
+ }
+ .rows{
+  width: 500px;
+  height: 100px;
+
+ }
+ .colume{
+  width: 100px;
+  height: 100px;
+  background: #000;
+  color: #fff;
+  float: left;
+ }
+ #point{
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  left: 0px;
+  top: 0px;
+ }
+</style>
+<body>
+  <div>
+    <!-- <div id="seat">
+      <div class="rows" id="rows">
+        <div class="colume">1</div>
+        <div class="colume">2</div>
+        <div class="colume">3</div>
+        <div class="colume">4</div>
+        <div class="colume">5</div>
+      </div>    
+    </div> -->
+    <img id="seat" src="./img.png" style="" />
+  </div>
+  <div>123</div>
+  
+   <!--  -->
+
+  
+
+
+  <script src="./js/hammer.min.js"></script>
+  <script type="text/javascript">
+
+
+    
+
+    var seat = document.getElementById("seat")
+    var scaleBox = document.getElementById("scale-box")
+
+    seat.style.webkitTransformOrigin = `0px 0px 0px`
+    seat.style.webkitTransition = `all 0.1s ease-out`
+    seat.style.cursor = `pointer`
+    seat.setAttribute("draggable","false")
+
+
+
+
+    var mousedown = false;
+    var mouseStartX = 0;
+    var mouseStartY = 0;
+    var mouseMoveX = 0;
+    var mouseMoveY = 0;
+    var realMouseX = 0;
+    var realMouseY = 0;
+    seat.addEventListener("mousedown", down)
+    seat.parentNode.addEventListener("mousemove", move)
+    seat.addEventListener("mouseup", up)
+    // seat.addEventListener("mouseleave", up)
+    seat.addEventListener("touchstart", down)
+    seat.parentNode.addEventListener("touchmove", move)
+    seat.addEventListener("touchend", up)
+
+
+    function down(e){
+      mousedown = true;
+      var eX = (e.clientX || e.clientX == 0)?e.clientX:e.touches[0].clientX;
+      var eY = (e.clientY || e.clientY == 0)?e.clientY:e.touches[0].clientY;
+      mouseStartX = eX - seat.offsetLeft;
+      mouseStartY = eY - seat.offsetTop;
+    }
+    function move(e){
+      e.preventDefault()
+      if(!mousedown) return
+      var eX = (e.clientX || e.clientX == 0)?e.clientX:e.touches[0].clientX;
+      var eY = (e.clientY || e.clientY == 0)?e.clientY:e.touches[0].clientY;
+      mouseMoveX = eX - mouseStartX;
+      mouseMoveY = eY - mouseStartY;
+
+
+
+      var tranX = nowTranX + mouseMoveX;
+      var tranY = nowTranY + mouseMoveY;
+
+      // if(tranX < 0){
+      //   return
+      // }
+      // console.log(mouseMoveX)
+
+      seat.style.webkitTransition = `all 0s ease-out`
+      seat.style.webkitTransform = `translate(${tranX}px,${tranY}px) scale(${scale})`
+    }
+    function up(e){
+      if(!mousedown) return
+      mousedown = false
+
+      realMouseX += mouseMoveX/scale
+      realMouseY += mouseMoveY/scale
+      nowTranX += mouseMoveX
+      nowTranY += mouseMoveY
+    }
+
+
+
+    var zoomIntensity = 0.2;
+
+    var scale = 1;
+    var originx = 0;
+    var originy = 0;
+    var nowTranX = 0;
+    var nowTranY = 0;
+    seat.onmousewheel = function (event){
+        event.preventDefault();
+        var mouseX = event.clientX - seat.offsetLeft;
+        var mouseY = event.clientY - seat.offsetTop;
+        var wheel = event.wheelDelta/120;
+        var zoom = Math.exp(wheel*zoomIntensity);
+
+        if(scale*zoom > 4) return
+        if(scale*zoom < 0.5) return
+
+
+        goScale(mouseX, mouseY, zoom)
+
+    }
+
+    function goScale(mouseX, mouseY, zoom){
+      var realX = originx+mouseX/scale - realMouseX;
+      var realY = originy+mouseY/scale - realMouseY;
+      console.log(mouseX)
+      console.log(realMouseX)
+      console.log(realX)
+      console.log("-------")
+      nowTranX = mouseX -realX*(scale*zoom)
+      nowTranY = mouseY -realY*(scale*zoom)
+      seat.style.webkitTransition = `all 0.1s ease-out`
+      seat.style.webkitTransform = `translate(${nowTranX}px,${nowTranY}px) scale(${scale*zoom})`
+
+      originx -= mouseX/(scale*zoom) - mouseX/scale;
+      originy -= mouseY/(scale*zoom) - mouseY/scale;
+
+      scale *= zoom;
+      // realMouseX = 0;
+      // realMouseY = 0;
+    }
+
+
+
+
+  </script>
+</body>
+</html>

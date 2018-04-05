@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>选座位</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+</head>
+<style type="text/css">
+*{padding: 0px;margin:0px;}
+#seat{
+  width: 600px;
+  height: 300px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+
+</style>
+<body>
+
+  <img id="seat" src="./img.png" style="" />
+
+</body>
+<script src="../index.js"></script>
+<script>
+  var x1Scale = new X1Scale({
+    id: "seat"
+  })
+  x1Scale.realize()
+</script>
+</html>
